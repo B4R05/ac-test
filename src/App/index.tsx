@@ -13,32 +13,41 @@ import { GridRowSelectionModel } from "@mui/x-data-grid";
 import { EmployeeType, Person, PersonRole } from "../types";
 import Table from "./Table";
 import { Filter } from "./Filter";
+import { useFilterState, useGridState, useUIState } from "../contexts";
 
 function App() {
-  const [rowSelectionModel, setRowSelectionModel] =
-    React.useState<GridRowSelectionModel>([]);
-  const [search, setSearch] = React.useState<string>("");
-  const [offset, setOffset] = React.useState<number>(0);
-  const [pageSize, setPageSize] = React.useState<number>(10);
-  const [role, setRole] = React.useState<PersonRole>("ANY");
-  const [employeeType, setEmployeeType] = React.useState<EmployeeType>("ANY");
-  const [showDrawer, setShowDrawer] = React.useState<boolean>(false);
-  const [sort, setSort] = React.useState<keyof Person | null>(null);
-  const [sortDirection, setSortDirection] = React.useState<
-    "asc" | "desc" | null | undefined
-  >(null);
-  const [items, setItems] = React.useState<Person[]>([]);
-  const [count, setCount] = React.useState<number>(0);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const {
+    rowSelectionModel,
+    setRowSelectionModel,
+    offset,
+    pageSize,
+    sort,
+    sortDirection,
+    setItems,
+    setCount,
+    setLoading,
+  } = useGridState();
+
+  const { search, role, employeeType } = useFilterState();
+
+  const { showDrawer, errorMessage, setShowDrawer, setErrorMessage } =
+    useUIState();
 
   useEffect(() => {
     setShowDrawer(rowSelectionModel.length > 0);
-  }, [rowSelectionModel]);
+  }, [rowSelectionModel, setShowDrawer]);
 
   useEffect(() => {
     setLoading(true);
-    queryApi(search, role, employeeType, offset, pageSize, sort, sortDirection)
+    queryApi(
+      search,
+      role as PersonRole,
+      employeeType as EmployeeType,
+      offset,
+      pageSize,
+      sort,
+      sortDirection
+    )
       .then(({ items, count }) => {
         setItems(items);
         setCount(count);
@@ -47,7 +56,19 @@ function App() {
       .catch(() =>
         setErrorMessage("There has been an error loading from the API.")
       );
-  }, [search, role, employeeType, offset, pageSize, sort, sortDirection]);
+  }, [
+    search,
+    role,
+    employeeType,
+    offset,
+    pageSize,
+    sort,
+    sortDirection,
+    setLoading,
+    setItems,
+    setCount,
+    setErrorMessage,
+  ]);
 
   return (
     <Container>
@@ -64,27 +85,8 @@ function App() {
           <Typography variant="h4">Person Admin</Typography>
         </Box>
 
-        <Filter
-          {...{
-            search,
-            setSearch,
-            role,
-            setRole,
-            employeeType,
-            setEmployeeType,
-          }}
-        />
-
-        <Table
-          items={items}
-          loading={loading}
-          rowCount={count}
-          pageSize={pageSize}
-          rowSelectionModel={rowSelectionModel}
-          setRowSelectionModel={setRowSelectionModel}
-          setOffset={setOffset}
-          setPageSize={setPageSize}
-        />
+        <Filter />
+        <Table />
 
         <Drawer
           anchor="bottom"

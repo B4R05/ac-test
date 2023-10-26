@@ -2,6 +2,7 @@ import React from "react";
 import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
 import { Person } from "../types";
 import { Box } from "@mui/material";
+import { useGridState } from "../contexts";
 
 interface TableProps {
   items: Person[];
@@ -16,17 +17,29 @@ interface TableProps {
   setOffset: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Table(props: TableProps) {
+export default function Table() {
+  // const {
+  //   items,
+  //   loading,
+  //   rowCount,
+  //   pageSize,
+  //   rowSelectionModel,
+  //   setRowSelectionModel,
+  //   setPageSize,
+  //   setOffset,
+  // } = props;
+
   const {
     items,
     loading,
-    rowCount,
+    count,
     pageSize,
     rowSelectionModel,
     setRowSelectionModel,
     setPageSize,
     setOffset,
-  } = props;
+  } = useGridState();
+
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 70 },
     {
@@ -65,7 +78,7 @@ export default function Table(props: TableProps) {
         disableColumnFilter
         disableRowSelectionOnClick
         paginationMode="server"
-        rowCount={rowCount}
+        rowCount={count}
         initialState={{
           pagination: { paginationModel: { pageSize } },
         }}

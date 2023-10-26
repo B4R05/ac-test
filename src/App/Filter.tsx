@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { EmployeeType, PersonRole } from "../types";
+import { useFilterState } from "../contexts";
 
 interface FilterProps {
   search: string;
@@ -21,9 +22,12 @@ interface FilterProps {
   setEmployeeType: React.Dispatch<React.SetStateAction<EmployeeType>>;
 }
 
-export function Filter(props: FilterProps) {
+export function Filter() {
+  // const { search, setSearch, role, setRole, employeeType, setEmployeeType } =
+  //   props;
+
   const { search, setSearch, role, setRole, employeeType, setEmployeeType } =
-    props;
+    useFilterState();
 
   useEffect(() => {
     if (role !== "EMPLOYEE") {
@@ -57,7 +61,7 @@ export function Filter(props: FilterProps) {
             name="role"
             label="Role"
             onChange={(e) => setRole(e.target.value as PersonRole)}
-            value={role}
+            value={role as any} // TODO FIX THIS
           >
             <MenuItem value="ANY">Any</MenuItem>
             <MenuItem value="STUDENT">Student</MenuItem>
@@ -73,7 +77,7 @@ export function Filter(props: FilterProps) {
             name="employee"
             label="Employee Type"
             onChange={(e) => setEmployeeType(e.target.value as EmployeeType)}
-            value={employeeType}
+            value={employeeType as any} // TODO FIX THIS
             disabled={role === "STUDENT"}
           >
             <MenuItem value="ANY">Any</MenuItem>
