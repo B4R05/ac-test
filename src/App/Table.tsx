@@ -1,34 +1,10 @@
-import React from "react";
-import { DataGrid, GridColDef, GridRowSelectionModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Person } from "../types";
 import { Box } from "@mui/material";
-import { useGridState } from "../contexts";
-
-interface TableProps {
-  items: Person[];
-  rowCount: number;
-  loading: boolean;
-  pageSize: number;
-  rowSelectionModel: GridRowSelectionModel;
-  setRowSelectionModel: React.Dispatch<
-    React.SetStateAction<GridRowSelectionModel>
-  >;
-  setPageSize: React.Dispatch<React.SetStateAction<number>>;
-  setOffset: React.Dispatch<React.SetStateAction<number>>;
-}
+import { EMPLOYEE_TYPE, ROLES } from "../constants";
+import { useGridState } from "../hooks/useGridState";
 
 export default function Table() {
-  // const {
-  //   items,
-  //   loading,
-  //   rowCount,
-  //   pageSize,
-  //   rowSelectionModel,
-  //   setRowSelectionModel,
-  //   setPageSize,
-  //   setOffset,
-  // } = props;
-
   const {
     items,
     loading,
@@ -55,7 +31,7 @@ export default function Table() {
       width: 150,
       editable: true,
       type: "singleSelect",
-      valueOptions: ["STUDENT", "EMPLOYEE"],
+      valueOptions: [ROLES.STUDENT, ROLES.EMPLOYEE],
     },
     {
       field: "employeeType",
@@ -63,7 +39,7 @@ export default function Table() {
       width: 150,
       editable: true,
       type: "singleSelect",
-      valueOptions: ["FULL_TIME", "PART_TIME"],
+      valueOptions: [EMPLOYEE_TYPE.FULL_TIME, EMPLOYEE_TYPE.PART_TIME],
     },
     { field: "email", headerName: "Email", width: 200 },
   ];

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,34 +11,23 @@ import {
   Typography,
 } from "@mui/material";
 import { EmployeeType, PersonRole } from "../types";
-import { useFilterState } from "../contexts";
-
-interface FilterProps {
-  search: string;
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
-  role: PersonRole;
-  setRole: React.Dispatch<React.SetStateAction<PersonRole>>;
-  employeeType: EmployeeType;
-  setEmployeeType: React.Dispatch<React.SetStateAction<EmployeeType>>;
-}
+import { DEFAULT_SEARCH, EMPLOYEE_TYPE, ROLES } from "../constants";
+import { useFilterState } from "../hooks/useFilterState";
 
 export function Filter() {
-  // const { search, setSearch, role, setRole, employeeType, setEmployeeType } =
-  //   props;
-
   const { search, setSearch, role, setRole, employeeType, setEmployeeType } =
     useFilterState();
 
   useEffect(() => {
-    if (role !== "EMPLOYEE") {
-      setEmployeeType("ANY");
+    if (role !== ROLES.EMPLOYEE) {
+      setEmployeeType(EMPLOYEE_TYPE.ANY);
     }
   }, [role, setEmployeeType]);
 
   const onReset = () => {
-    setSearch("");
-    setRole("ANY");
-    setEmployeeType("ANY");
+    setSearch(DEFAULT_SEARCH);
+    setRole(ROLES.ANY);
+    setEmployeeType(EMPLOYEE_TYPE.ANY);
   };
 
   return (
@@ -60,12 +49,12 @@ export function Filter() {
             id="role"
             name="role"
             label="Role"
-            onChange={(e) => setRole(e.target.value as PersonRole)}
-            value={role as any} // TODO FIX THIS
+            onChange={(e) => setRole(e.target.value)}
+            value={role as PersonRole}
           >
-            <MenuItem value="ANY">Any</MenuItem>
-            <MenuItem value="STUDENT">Student</MenuItem>
-            <MenuItem value="EMPLOYEE">Employee</MenuItem>
+            <MenuItem value={ROLES.ANY}>Any</MenuItem>
+            <MenuItem value={ROLES.STUDENT}>Student</MenuItem>
+            <MenuItem value={ROLES.EMPLOYEE}>Employee</MenuItem>
           </Select>
         </FormControl>
 
@@ -76,13 +65,13 @@ export function Filter() {
             id="employee"
             name="employee"
             label="Employee Type"
-            onChange={(e) => setEmployeeType(e.target.value as EmployeeType)}
-            value={employeeType as any} // TODO FIX THIS
-            disabled={role === "STUDENT"}
+            onChange={(e) => setEmployeeType(e.target.value)}
+            value={employeeType as EmployeeType}
+            disabled={role === ROLES.STUDENT}
           >
-            <MenuItem value="ANY">Any</MenuItem>
-            <MenuItem value="FULL_TIME">Full-Time</MenuItem>
-            <MenuItem value="PART_TIME">Part-Time</MenuItem>
+            <MenuItem value={EMPLOYEE_TYPE.ANY}>Any</MenuItem>
+            <MenuItem value={EMPLOYEE_TYPE.FULL_TIME}>Full-Time</MenuItem>
+            <MenuItem value={EMPLOYEE_TYPE.PART_TIME}>Part-Time</MenuItem>
           </Select>
         </FormControl>
 

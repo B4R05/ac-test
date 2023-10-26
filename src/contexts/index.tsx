@@ -1,39 +1,23 @@
 import { GridRowSelectionModel } from "@mui/x-data-grid";
-import React, {
-  useState,
-  createContext,
-  useContext,
-  SetStateAction,
-  Dispatch,
-  ReactElement,
-} from "react";
-import { Person, PersonRole } from "../types";
+import { useState, createContext, ReactElement } from "react";
+import { DEFAULT_SEARCH, EMPLOYEE_TYPE, ROLES } from "../constants";
+import { Person } from "../types";
+import { FilterStateType, GridStateType, UIStateType } from "./types";
 
-type FilterStateType = {
-  search: string;
-  setSearch: Dispatch<SetStateAction<string>>;
-  role: PersonRole | string;
-  setRole: Dispatch<SetStateAction<string>>;
-  employeeType: string;
-  setEmployeeType: Dispatch<SetStateAction<string>>;
-};
-
-const FilterStateContext = createContext<FilterStateType | undefined>(
+export const FilterStateContext = createContext<FilterStateType | undefined>(
   undefined
 );
 
-export function useFilterState() {
-  const context = useContext(FilterStateContext);
-  if (!context) {
-    throw new Error("useFilterState must be used within a FilterStateProvider");
-  }
-  return context;
-}
-
 export function FilterStateProvider({ children }: { children: ReactElement }) {
-  const [search, setSearch] = useState("");
-  const [role, setRole] = useState("ANY");
-  const [employeeType, setEmployeeType] = useState("ANY");
+  const params = new URLSearchParams(window.location.search);
+
+  const initialSearch = params.get("search") || DEFAULT_SEARCH;
+  const initialRole = params.get("role") || ROLES.ANY;
+  const initialEmployeeType = params.get("employeeType") || EMPLOYEE_TYPE.ANY;
+
+  const [search, setSearch] = useState(initialSearch);
+  const [role, setRole] = useState(initialRole);
+  const [employeeType, setEmployeeType] = useState(initialEmployeeType);
 
   return (
     <FilterStateContext.Provider
@@ -51,34 +35,9 @@ export function FilterStateProvider({ children }: { children: ReactElement }) {
   );
 }
 
-type GridStateType = {
-  items: Person[];
-  setItems: Dispatch<SetStateAction<Person[]>>;
-  count: number;
-  setCount: Dispatch<SetStateAction<number>>;
-  loading: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  pageSize: number;
-  setPageSize: Dispatch<SetStateAction<number>>;
-  offset: number;
-  setOffset: Dispatch<SetStateAction<number>>;
-  sort: keyof Person | null;
-  setSort: Dispatch<SetStateAction<keyof Person | null>>;
-  sortDirection: "asc" | "desc" | null;
-  setSortDirection: Dispatch<SetStateAction<"asc" | "desc" | null>>;
-  rowSelectionModel: GridRowSelectionModel;
-  setRowSelectionModel: Dispatch<SetStateAction<GridRowSelectionModel>>;
-};
-
-const GridStateContext = createContext<GridStateType | undefined>(undefined);
-
-export function useGridState() {
-  const context = useContext(GridStateContext);
-  if (!context) {
-    throw new Error("useGridState must be used within a GridStateProvider");
-  }
-  return context;
-}
+export const GridStateContext = createContext<GridStateType | undefined>(
+  undefined
+);
 
 export function GridStateProvider({ children }: { children: ReactElement }) {
   const [items, setItems] = useState<Person[]>([]);
@@ -119,22 +78,7 @@ export function GridStateProvider({ children }: { children: ReactElement }) {
   );
 }
 
-type UIStateType = {
-  showDrawer: boolean;
-  setShowDrawer: Dispatch<SetStateAction<boolean>>;
-  errorMessage: string | null;
-  setErrorMessage: Dispatch<SetStateAction<string | null>>;
-};
-
-const UIStateContext = createContext<UIStateType | undefined>(undefined);
-
-export function useUIState() {
-  const context = useContext(UIStateContext);
-  if (!context) {
-    throw new Error("useUIState must be used within a UIStateProvider");
-  }
-  return context;
-}
+export const UIStateContext = createContext<UIStateType | undefined>(undefined);
 
 export function UIStateProvider({ children }: { children: ReactElement }) {
   const [showDrawer, setShowDrawer] = useState<boolean>(false);

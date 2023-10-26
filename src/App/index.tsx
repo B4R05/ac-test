@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -8,12 +8,13 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
-import { queryApi } from "../api";
-import { GridRowSelectionModel } from "@mui/x-data-grid";
-import { EmployeeType, Person, PersonRole } from "../types";
 import Table from "./Table";
 import { Filter } from "./Filter";
-import { useFilterState, useGridState, useUIState } from "../contexts";
+import { updateQueryString } from "../utils";
+import useFetchData from "../hooks/useFetchData";
+import { useGridState } from "../hooks/useGridState";
+import { useFilterState } from "../hooks/useFilterState";
+import { useUIState } from "../hooks/useUIState";
 
 function App() {
   const {
@@ -28,38 +29,26 @@ function App() {
     setLoading,
   } = useGridState();
 
-  const { search, role, employeeType } = useFilterState();
-
+  const filterState = useFilterState();
   const { showDrawer, errorMessage, setShowDrawer, setErrorMessage } =
     useUIState();
+
+  useEffect(() => {
+    const gridState = {
+      offset,
+      pageSize,
+      sort,
+      sortDirection,
+    };
+    updateQueryString(filterState, gridState);
+  }, [offset, pageSize, sort, sortDirection, filterState]);
 
   useEffect(() => {
     setShowDrawer(rowSelectionModel.length > 0);
   }, [rowSelectionModel, setShowDrawer]);
 
-  useEffect(() => {
-    setLoading(true);
-    queryApi(
-      search,
-      role as PersonRole,
-      employeeType as EmployeeType,
-      offset,
-      pageSize,
-      sort,
-      sortDirection
-    )
-      .then(({ items, count }) => {
-        setItems(items);
-        setCount(count);
-        setLoading(false);
-      })
-      .catch(() =>
-        setErrorMessage("There has been an error loading from the API.")
-      );
-  }, [
-    search,
-    role,
-    employeeType,
+  useFetchData({
+    ...filterState,
     offset,
     pageSize,
     sort,
@@ -68,7 +57,7 @@ function App() {
     setItems,
     setCount,
     setErrorMessage,
-  ]);
+  });
 
   return (
     <Container>
