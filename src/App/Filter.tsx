@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import {
   Box,
   Button,
@@ -24,6 +24,12 @@ interface FilterProps {
 export function Filter(props: FilterProps) {
   const { search, setSearch, role, setRole, employeeType, setEmployeeType } =
     props;
+
+  useEffect(() => {
+    if (role !== "EMPLOYEE") {
+      setEmployeeType("ANY");
+    }
+  }, [role, setEmployeeType]);
 
   const onReset = () => {
     setSearch("");
