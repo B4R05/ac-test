@@ -52,6 +52,7 @@ export default function Table(props: TableProps) {
       type: "singleSelect",
       valueOptions: ["FULL_TIME", "PART_TIME"],
     },
+    { field: "email", headerName: "Email", width: 200 },
   ];
 
   return (
